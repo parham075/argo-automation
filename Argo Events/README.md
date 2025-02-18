@@ -96,4 +96,19 @@ In this section I will provide a tutorial to implement argo events using [Quick 
             ```
             We will get success but we didn't defined any trigger and we haven't decide what should be happened after creating this eventsource. indeed creating this webhook is an acknowledgement to say the event received successfully
     - Create Sensor:
-        
+        ```
+        kubectl -n argo-events apply -f sensor.yaml
+        ```
+    
+    - Output:
+        ```
+        kubectl -n argo-events get pods
+        NAME                                        READY   STATUS      RESTARTS   AGE
+        controller-manager-b4884fb94-9klvk          1/1     Running     0          78m
+        eventbus-default-stan-0                     2/2     Running     0          63m
+        eventbus-default-stan-1                     2/2     Running     0          63m
+        eventbus-default-stan-2                     2/2     Running     0          63m
+        payload-kzld7                               0/1     Completed   0          65s
+        webhook-eventsource-9c6x8-5c5dfbd8d-7547z   1/1     Running     0          53m
+        webhook-sensor-w79rg-598d5657c5-76rxb       1/1     Running     0          4m11s
+        ```

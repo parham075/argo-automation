@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: webhook # you can decide to rename the Sensor name
+spec:
+  template:
+    serviceAccountName: argo-events-sa
+  dependencies:
+  - name: payload
+    eventSourceName: webhook # Whenever sb send a webhook(eventSourceName) the sensor will be activated
+    eventName: devops-toolkit
+  triggers:
+  - template:
+      name: payload
+      k8s: # A Type of triggers (https://argoproj.github.io/argo-events/APIs/#argoproj.io/v1alpha1.TriggerTemplate)
+        group: ""
+        version: v1
+        resource: pods
+        operation: create
+        source:
+          resource:
+            apiVersion: v1
+            kind: Pod
+            metadata:
+              generateName: payload- # we will enforce to create the pod with this prefix
+              labels:
+                app: payload
+            spec:
+              containers:
+              - name: hello
+                image: alpine
+                command: ["echo"]
+                args: ["This is the message you sent me:\n", ""]
+              restartPolicy: Never
+        parameters: # use output of payload
+          - src:
+              dependencyName: payload
+              dataKey: body.message
+            dest: spec.containers.0.args.1 # got to paylod pod find the containers, grab the first one, use the arg and return the second arg (in this case: "" ["This is the message you sent me:\n", ""])
