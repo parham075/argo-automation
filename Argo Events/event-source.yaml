@@ -1,0 +1,14 @@
+apiVersion: argoproj.io/v1alpha1
+kind: EventSource
+metadata:
+  name: webhook # The name of EventSource
+spec:
+  service:
+    ports:
+      - port: 12000
+        targetPort: 12000
+  webhook: # type of event. check: https://argoproj.github.io/argo-events/APIs/#argoproj.io/v1alpha1.WebhookEventSource
+    devops-toolkit: # We can add one or more specification like devops-toolkit
+      port: "12000"
+      endpoint: /devops-toolkit
+      method: POST
